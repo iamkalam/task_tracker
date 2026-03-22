@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Tracker</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --card: #ffffff;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --accent: #0f766e;
+        --danger: #b91c1c;
+        --line: #d1d5db;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: radial-gradient(circle at top, #e8f7f5 0%, var(--bg) 55%);
+        color: var(--text);
+      }
+
+      .container {
+        max-width: 720px;
+        margin: 48px auto;
+        padding: 24px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 12px 24px rgba(2, 6, 23, 0.06);
+      }
+
+      h1 {
+        margin-top: 0;
+      }
+
+      .stats {
+        color: var(--muted);
+        margin-bottom: 20px;
+      }
+
+      .task-form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      input[type="text"] {
+        flex: 1;
+        padding: 11px 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        font-size: 15px;
+      }
+
+      button {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .btn-add {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .task-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 10px;
+      }
+
+      .task-item {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .task-title.done {
+        text-decoration: line-through;
+        color: var(--muted);
+      }
+
+      .task-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn-toggle {
+        background: #e5e7eb;
+        color: #111827;
+      }
+
+      .btn-delete {
+        background: var(--danger);
+        color: #fff;
+      }
+
+      .empty {
+        color: var(--muted);
+        text-align: center;
+        padding: 18px;
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <section class="card">
+        <h1>Simple Task Tracker</h1>
+        <p class="stats">Completed {{ completed_tasks }} of {{ total_tasks }} tasks</p>
+
+        <form class="task-form" method="post" action="/tasks">
+          <input type="text" name="title" placeholder="Add a new task" required />
+          <button class="btn-add" type="submit">Add Task</button>
+        </form>
+
+        {% if tasks %}
+        <ul class="task-list">
+          {% for task in tasks %}
+          <li class="task-item">
+            <span class="task-title {% if task.done %}done{% endif %}">{{ task.title }}</span>
+            <div class="task-actions">
+              <form method="post" action="/tasks/{{ task.id }}/toggle">
+                <button class="btn-toggle" type="submit">
+                  {% if task.done %}Undo{% else %}Done{% endif %}
+                </button>
+              </form>
+              <form method="post" action="/tasks/{{ task.id }}/delete">
+                <button class="btn-delete" type="submit">Delete</button>
+              </form>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="empty">No tasks yet. Add your first task above.</p>
+        {% endif %}
+      </section>
+    </main>
+  </body>
+</html>
