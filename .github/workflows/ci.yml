@@ -1,0 +1,39 @@
+name: CI Task Tracker
+
+on:
+  # Run CI on main branch changes, PRs, and manual triggers.
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+env:
+  # Centralized config for reuse in jobs.
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  ci:
+    name: Run CI checks
+    runs-on: ubuntu-latest
+
+    steps:
+      # Fetch repository contents.
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # Use a consistent Python runtime.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      # Install Python dependencies.
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Basic syntax validation.
+      - name: Syntax check
+        run: python -m py_compile app.py
